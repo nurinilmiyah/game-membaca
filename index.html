@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Membaca Fonikids</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #e0f7fa; padding: 20px;}
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 4px solid #ffb300; }
+        .tajuk-buku { font-size: 24px; font-weight: bold; color: #d32f2f; margin-bottom: 20px; text-transform: uppercase; }
+        .tahap-badge { background: #0288d1; color: white; padding: 8px 20px; border-radius: 20px; font-size: 16px; font-weight: bold; display: inline-block; margin-bottom: 20px;}
+        .teks-bacaan { font-size: 40px; color: #333; margin: 20px 0; font-weight: bold; }
+        .btn-mikrofon { font-size: 20px; padding: 15px 30px; cursor: pointer; border-radius: 50px; border: none; background: #4caf50; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-mikrofon:active { transform: scale(0.95); }
+        .btn-seterusnya { font-size: 18px; padding: 10px 20px; cursor: pointer; border-radius: 10px; border: none; background: #ff9800; color: white; margin-top: 20px; display: none; font-weight: bold; }
+        #status { margin-top: 20px; font-size: 18px; font-weight: bold; min-height: 30px; }
+        #visual-feedback { font-size: 70px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tajuk-buku">Fonikids: Literasi Membaca</div>
+    <div id="tahap-label" class="tahap-badge">Tahap Dimuatkan...</div>
+    <p>Tekan butang mikrofon dan baca kuat-kuat:</p>
+    
+    <div id="visual-feedback">👕</div>
+    
+    <div id="teks-paparan" class="teks-bacaan">baju</div>
+    
+    <button id="btn-mic" class="btn-mikrofon" onclick="mulaSebut()">🎤 Mula Sebut</button>
+    <p id="status"></p>
+
+    <button id="btn-next" class="btn-seterusnya" onclick="soalanSeterusnya()">Seterusnya ➡️</button>
+</div>
+
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ms-MY'; 
+
+    // SILIBUS LENGKAP BUKU FONIKIDS LITERASI MEMBACA
+    const silibus = [
+        // Kumpulan 1: Asas Vokal A E I O U 
+        { tahap: "Asas Vokal", teks: "a", ikon: "🅰️" }, //[cite: 3]
+        { tahap: "Asas Vokal", teks: "e", ikon: "🇪" }, //[cite: 3]
+        { tahap: "Asas Vokal", teks: "i", ikon: "ℹ️" }, //[cite: 3]
+        { tahap: "Asas Vokal", teks: "o", ikon: "🅾️" }, //[cite: 3]
+        { tahap: "Asas Vokal", teks: "u", ikon: "⛎" }, //[cite: 3]
+
+        // Kumpulan 2: Konsonan Pilihan (B, C, D, G, J, L, P, R, V, X, Z)
+        { tahap: "Konsonan: B", teks: "baju", ikon: "👕" }, //[cite: 9]
+        { tahap: "Konsonan: B", teks: "buku", ikon: "📖" }, //[cite: 9]
+        { tahap: "Konsonan: C", teks: "cawan", ikon: "☕" }, //[cite: 10]
+        { tahap: "Konsonan: D", teks: "dadu", ikon: "🎲" }, //[cite: 11]
+        { tahap: "Konsonan: G", teks: "gajah", ikon: "🐘" }, //[cite: 13]
+        { tahap: "Konsonan: J", teks: "jari", ikon: "🖐️" }, //[cite: 15]
+        { tahap: "Konsonan: L", teks: "lari", ikon: "🏃" }, //[cite: 17]
+        { tahap: "Konsonan: P", teks: "paku", ikon: "🔨" }, //[cite: 20]
+        { tahap: "Konsonan: R", teks: "raga", ikon: "🧺" }, //[cite: 22]
+        { tahap: "Konsonan: V", teks: "van", ikon: "🚐" }, //[cite: 25]
+        { tahap: "Konsonan: X", teks: "x-ray", ikon: "🩻" }, //[cite: 26]
+        { tahap: "Konsonan: Z", teks: "zoo", ikon: "🦁" }, //[cite: 27]
+
+        // Kumpulan 3: Digraf
+        { tahap: "Digraf", teks: "bunga", ikon: "🌸" }, //[cite: 29]
+        { tahap: "Digraf", teks: "nyamuk", ikon: "🦟" }, //[cite: 29]
+        { tahap: "Digraf", teks: "kucing", ikon: "🐱" }, //[cite: 30]
+        { tahap: "Digraf", teks: "monyet", ikon: "🐒" }, //[cite: 30]
+
+        // Kumpulan 4: Mari Membaca (Level 1 - Ayat Pendek)
+        { tahap: "Mari Membaca: Level 1", teks: "Ini ibu", ikon: "🧕" }, //[cite: 31]
+        { tahap: "Mari Membaca: Level 1", teks: "Ibu beli buku", ikon: "📚" }, //[cite: 31]
+        { tahap: "Mari Membaca: Level 1", teks: "Ini bola", ikon: "⚽" }, //[cite: 31]
+        { tahap: "Mari Membaca: Level 1", teks: "Adik main bola", ikon: "🏃" }, //[cite: 31]
+        { tahap: "Mari Membaca: Level 1", teks: "Ini epal", ikon: "🍎" }, //[cite: 32]
+        { tahap: "Mari Membaca: Level 1", teks: "Epal ini sedap", ikon: "🍎" }, //[cite: 32]
+
+        // Kumpulan 5: Mari Membaca (Level 2 - Ayat Lebih Panjang)
+        { tahap: "Mari Membaca: Level 2", teks: "Ali ada bola", ikon: "👦" }, //[cite: 33]
+        { tahap: "Mari Membaca: Level 2", teks: "Ali main bola dengan Abu", ikon: "⚽" }, //[cite: 33]
+        { tahap: "Mari Membaca: Level 2", teks: "Mimi ada kucing", ikon: "👧" }, //[cite: 33]
+        { tahap: "Mari Membaca: Level 2", teks: "Nama kucing Mimi itu Tom", ikon: "🐱" }, //[cite: 33]
+        { tahap: "Mari Membaca: Level 2", teks: "Hari ini hujan", ikon: "🌧️" }, //[cite: 34]
+        { tahap: "Mari Membaca: Level 2", teks: "Fizi baca buku cerita", ikon: "📖" } //[cite: 34]
+    ];
+
+    let indeksSemasa = 0;
+
+    function paparSoalan() {
+        document.getElementById('tahap-label').innerText = silibus[indeksSemasa].tahap;
+        document.getElementById('teks-paparan').innerText = silibus[indeksSemasa].teks;
+        document.getElementById('visual-feedback').innerText = silibus[indeksSemasa].ikon;
+        
+        document.getElementById('status').innerText = "";
+        document.getElementById('btn-next').style.display = "none";
+        document.getElementById('btn-mic').style.display = "inline-block";
+    }
+
+    function mulaSebut() {
+        document.getElementById('status').innerText = "Sila baca sekarang...";
+        document.getElementById('status').style.color = "#0288d1";
+        recognition.start();
+    }
+
+    recognition.onresult = function(event) {
+        const sebutan = event.results[0][0].transcript.toLowerCase();
+        
+        const sebutanBersih = sebutan.replace(/[.,!]/g, "").trim();
+        const targetBersih = silibus[indeksSemasa].teks.toLowerCase().replace(/[.,!]/g, "").trim();
+
+        if (sebutanBersih === targetBersih) {
+            document.getElementById('status').innerText = "Hebat! Sebutan tepat. 🌟";
+            document.getElementById('status').style.color = "green";
+            document.getElementById('btn-mic').style.display = "none"; 
+            
+            if(indeksSemasa < silibus.length - 1) {
+                document.getElementById('btn-next').style.display = "inline-block"; 
+            } else {
+                document.getElementById('status').innerText = "Tahniah! Anda telah tamat buku Fonikids! 🏆";
+            }
+        } else {
+            document.getElementById('status').innerText = "Hampir tepat. Anda sebut: '" + sebutan + "'. Cuba baca semula.";
+            document.getElementById('status').style.color = "red";
+        }
+    }
+
+    recognition.onerror = function(event) {
+        document.getElementById('status').innerText = "Suara tidak dikesan. Sila tekan mikrofon dan cuba lagi.";
+        document.getElementById('status').style.color = "red";
+    }
+
+    function soalanSeterusnya() {
+        indeksSemasa++;
+        paparSoalan();
+    }
+
+    window.onload = paparSoalan;
+</script>
+</body>
+</html>
