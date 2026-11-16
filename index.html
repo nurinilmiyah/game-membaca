@@ -39,50 +39,43 @@
     const recognition = new SpeechRecognition();
     recognition.lang = 'ms-MY'; 
 
-    // SILIBUS LENGKAP BUKU FONIKIDS LITERASI MEMBACA
+    // SILIBUS LENGKAP BUKU FONIKIDS LITERASI MEMBACA (Tanpa sebutan huruf individu)
     const silibus = [
-        // Kumpulan 1: Asas Vokal A E I O U 
-        { tahap: "Asas Vokal", teks: "a", ikon: "🅰️" }, //[cite: 3]
-        { tahap: "Asas Vokal", teks: "e", ikon: "🇪" }, //[cite: 3]
-        { tahap: "Asas Vokal", teks: "i", ikon: "ℹ️" }, //[cite: 3]
-        { tahap: "Asas Vokal", teks: "o", ikon: "🅾️" }, //[cite: 3]
-        { tahap: "Asas Vokal", teks: "u", ikon: "⛎" }, //[cite: 3]
+        // Kumpulan 1: Perkataan Suku Kata (Konsonan Pilihan)
+        { tahap: "Membaca Perkataan", teks: "baju", ikon: "👕" },
+        { tahap: "Membaca Perkataan", teks: "buku", ikon: "📖" },
+        { tahap: "Membaca Perkataan", teks: "cawan", ikon: "☕" },
+        { tahap: "Membaca Perkataan", teks: "dadu", ikon: "🎲" },
+        { tahap: "Membaca Perkataan", teks: "gajah", ikon: "🐘" },
+        { tahap: "Membaca Perkataan", teks: "jari", ikon: "🖐️" },
+        { tahap: "Membaca Perkataan", teks: "lari", ikon: "🏃" },
+        { tahap: "Membaca Perkataan", teks: "paku", ikon: "🔨" },
+        { tahap: "Membaca Perkataan", teks: "raga", ikon: "🧺" },
+        { tahap: "Membaca Perkataan", teks: "van", ikon: "🚐" },
+        { tahap: "Membaca Perkataan", teks: "x-ray", ikon: "🩻" },
+        { tahap: "Membaca Perkataan", teks: "zoo", ikon: "🦁" },
 
-        // Kumpulan 2: Konsonan Pilihan (B, C, D, G, J, L, P, R, V, X, Z)
-        { tahap: "Konsonan: B", teks: "baju", ikon: "👕" }, //[cite: 9]
-        { tahap: "Konsonan: B", teks: "buku", ikon: "📖" }, //[cite: 9]
-        { tahap: "Konsonan: C", teks: "cawan", ikon: "☕" }, //[cite: 10]
-        { tahap: "Konsonan: D", teks: "dadu", ikon: "🎲" }, //[cite: 11]
-        { tahap: "Konsonan: G", teks: "gajah", ikon: "🐘" }, //[cite: 13]
-        { tahap: "Konsonan: J", teks: "jari", ikon: "🖐️" }, //[cite: 15]
-        { tahap: "Konsonan: L", teks: "lari", ikon: "🏃" }, //[cite: 17]
-        { tahap: "Konsonan: P", teks: "paku", ikon: "🔨" }, //[cite: 20]
-        { tahap: "Konsonan: R", teks: "raga", ikon: "🧺" }, //[cite: 22]
-        { tahap: "Konsonan: V", teks: "van", ikon: "🚐" }, //[cite: 25]
-        { tahap: "Konsonan: X", teks: "x-ray", ikon: "🩻" }, //[cite: 26]
-        { tahap: "Konsonan: Z", teks: "zoo", ikon: "🦁" }, //[cite: 27]
+        // Kumpulan 2: Digraf
+        { tahap: "Digraf", teks: "bunga", ikon: "🌸" },
+        { tahap: "Digraf", teks: "nyamuk", ikon: "🦟" },
+        { tahap: "Digraf", teks: "kucing", ikon: "🐱" },
+        { tahap: "Digraf", teks: "monyet", ikon: "🐒" },
 
-        // Kumpulan 3: Digraf
-        { tahap: "Digraf", teks: "bunga", ikon: "🌸" }, //[cite: 29]
-        { tahap: "Digraf", teks: "nyamuk", ikon: "🦟" }, //[cite: 29]
-        { tahap: "Digraf", teks: "kucing", ikon: "🐱" }, //[cite: 30]
-        { tahap: "Digraf", teks: "monyet", ikon: "🐒" }, //[cite: 30]
+        // Kumpulan 3: Mari Membaca (Level 1 - Ayat Pendek)
+        { tahap: "Mari Membaca: Level 1", teks: "Ini ibu", ikon: "🧕" },
+        { tahap: "Mari Membaca: Level 1", teks: "Ibu beli buku", ikon: "📚" },
+        { tahap: "Mari Membaca: Level 1", teks: "Ini bola", ikon: "⚽" },
+        { tahap: "Mari Membaca: Level 1", teks: "Adik main bola", ikon: "🏃" },
+        { tahap: "Mari Membaca: Level 1", teks: "Ini epal", ikon: "🍎" },
+        { tahap: "Mari Membaca: Level 1", teks: "Epal ini sedap", ikon: "🍎" },
 
-        // Kumpulan 4: Mari Membaca (Level 1 - Ayat Pendek)
-        { tahap: "Mari Membaca: Level 1", teks: "Ini ibu", ikon: "🧕" }, //[cite: 31]
-        { tahap: "Mari Membaca: Level 1", teks: "Ibu beli buku", ikon: "📚" }, //[cite: 31]
-        { tahap: "Mari Membaca: Level 1", teks: "Ini bola", ikon: "⚽" }, //[cite: 31]
-        { tahap: "Mari Membaca: Level 1", teks: "Adik main bola", ikon: "🏃" }, //[cite: 31]
-        { tahap: "Mari Membaca: Level 1", teks: "Ini epal", ikon: "🍎" }, //[cite: 32]
-        { tahap: "Mari Membaca: Level 1", teks: "Epal ini sedap", ikon: "🍎" }, //[cite: 32]
-
-        // Kumpulan 5: Mari Membaca (Level 2 - Ayat Lebih Panjang)
-        { tahap: "Mari Membaca: Level 2", teks: "Ali ada bola", ikon: "👦" }, //[cite: 33]
-        { tahap: "Mari Membaca: Level 2", teks: "Ali main bola dengan Abu", ikon: "⚽" }, //[cite: 33]
-        { tahap: "Mari Membaca: Level 2", teks: "Mimi ada kucing", ikon: "👧" }, //[cite: 33]
-        { tahap: "Mari Membaca: Level 2", teks: "Nama kucing Mimi itu Tom", ikon: "🐱" }, //[cite: 33]
-        { tahap: "Mari Membaca: Level 2", teks: "Hari ini hujan", ikon: "🌧️" }, //[cite: 34]
-        { tahap: "Mari Membaca: Level 2", teks: "Fizi baca buku cerita", ikon: "📖" } //[cite: 34]
+        // Kumpulan 4: Mari Membaca (Level 2 - Ayat Lebih Panjang)
+        { tahap: "Mari Membaca: Level 2", teks: "Ali ada bola", ikon: "👦" },
+        { tahap: "Mari Membaca: Level 2", teks: "Ali main bola dengan Abu", ikon: "⚽" },
+        { tahap: "Mari Membaca: Level 2", teks: "Mimi ada kucing", ikon: "👧" },
+        { tahap: "Mari Membaca: Level 2", teks: "Nama kucing Mimi itu Tom", ikon: "🐱" },
+        { tahap: "Mari Membaca: Level 2", teks: "Hari ini hujan", ikon: "🌧️" },
+        { tahap: "Mari Membaca: Level 2", teks: "Fizi baca buku cerita", ikon: "📖" }
     ];
 
     let indeksSemasa = 0;
